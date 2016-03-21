@@ -1,2 +1,2 @@
-# xbuilder
-XML Builder DSL inspired by Groovy Markup
+## xbuilder
+XML Builder DSL in Scala inspired by Groovy Markup
