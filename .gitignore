@@ -1,0 +1,7 @@
+.idea/workspace.xml
+.idea_modules/
+target/
+.classpath
+.settings/
+.project
+.cache-main
