@@ -4,25 +4,31 @@ import scala.xml._
 import scala.util.DynamicVariable
 
 package object xbuilder {
-  object % {
-    private[this] val scope = new DynamicVariable[NodeBuffer](null)
-    def applyDynamic(label: String)(content: String): Unit = {
-      if(label == "text") {
-        val text = Text(content)
+  object % extends Dynamic {
+    private[this] val scope = new DynamicVariable[NodeBuffer](new NodeBuffer)
+    def applyDynamic(name: String)(content: => Any): Node = {
+      val evaledContent = content
+      if(name == "text" && evaledContent.isInstanceOf[String]) {
+        val text = Text(evaledContent.asInstanceOf[String])
         scope.value += text
+        text
       } else {
-        throw new IllegalArgumentException(s"${label} must be text")
+        this.applyDynamicNamed(name)(Seq():_*)(content)
       }
     }
-    def applyDynamicNamed(label: String)(attributes: (String, String)*): Node = {
-      var attributeList : List[(String, String)] = attributes.toList.reverse
-      var metadata: MetaData = null
-      while(!attributeList.isEmpty) {
-        val (name, value) = attributeList.head
-        metadata = new UnprefixedAttribute(name, value, metadata)
-        attributeList = attributeList.tail
+    def applyDynamicNamed(name: String)(attributes: (String, String)*)(block: => Any): Elem = {
+      def createMetaData(attributeList: List[(String, String)]): MetaData = attributeList match {
+        case Nil => Null
+        case (key, value) :: xs => new UnprefixedAttribute(key, value, createMetaData(xs))
       }
-      ???
+      var attributeList : List[(String, String)] = attributes.toList.reverse
+      var metadata: MetaData = createMetaData(attributeList)
+      val newElement = scope.withValue(new NodeBuffer) {
+        block
+        Elem(null, name, metadata, TopScope, true, scope.value.toSeq:_*)
+      }
+      scope.value += newElement
+      newElement
     }
   }
 }
