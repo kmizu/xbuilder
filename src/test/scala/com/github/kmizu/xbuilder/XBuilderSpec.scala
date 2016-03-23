@@ -10,8 +10,7 @@ class XBuilderSpec extends FunSpec {
       assertResult(Text("Foo"))(% text "Foo")
     }
     it("<project></project>") {
-      val element = %.project {
-      }
+      val element = %.project
       assertResult(element)(<project/>)
     }
     it("""<project name="xbuilder"""") {

@@ -16,6 +16,7 @@ package object xbuilder {
         this.applyDynamicNamed(name)(Seq():_*)(content)
       }
     }
+    def selectDynamic(name: String): Node = applyDynamic(name)(null)
     def applyDynamicNamed(name: String)(attributes: (String, String)*)(block: => Any): Elem = {
       def createMetaData(attributeList: List[(String, String)]): MetaData = attributeList match {
         case Nil => Null
