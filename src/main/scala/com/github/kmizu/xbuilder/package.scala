@@ -6,6 +6,12 @@ import scala.util.DynamicVariable
 package object xbuilder {
   object % extends Dynamic {
     private[this] val scope = new DynamicVariable[NodeBuffer](new NodeBuffer)
+    def buffer(content: => Any): NodeBuffer = {
+      scope.withValue(new NodeBuffer) {
+        content
+        scope.value
+      }
+    }
     def applyDynamic(name: String)(content: => Any): Node = {
       val evaledContent = content
       if(name == "text" && evaledContent.isInstanceOf[String]) {
