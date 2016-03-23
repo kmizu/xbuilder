@@ -13,13 +13,13 @@ class XBuilderSpec extends FunSpec {
       val element = %.project
       assertResult(element)(<project/>)
     }
-    it("""<project name="xbuilder"""") {
+    it("""<project name="xbuilder></project>"""") {
       val element = %.project(name="xbuilder") {
 
       }
       assertResult(element)(<project name="xbuilder"/>)
     }
-    it("""<project><license></license></project""") {
+    it("""<project><license></license></project>""") {
       val element = %project {
         %license {
 
